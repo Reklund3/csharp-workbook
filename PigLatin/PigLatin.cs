@@ -60,8 +60,8 @@ namespace PigLatin
     }
 }
 // Test Cases
-// child = ildchay
-// yellow = ellowyay
-// dye = yeday
-// bx = bxay
-// eat = eatyay
+// child = ildchay     works
+// yellow = ellowyay   not
+// dye = yeday         works
+// bx = bxay           not
+// eat = eatyay        works
