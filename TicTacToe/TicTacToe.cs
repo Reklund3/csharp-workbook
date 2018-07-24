@@ -41,9 +41,9 @@ namespace TicTacToe
         {
             Console.WriteLine("Player " + playerTurn);
             Console.WriteLine("Enter Row:");
-            int row = int.Parse(Console.ReadLine());
+            int row = checkInput();
             Console.WriteLine("Enter Column:");
-            int column = int.Parse(Console.ReadLine());
+            int column = checkInput();
             if (board[row][column] == " ")
             {
                 PlaceMark(row, column);
@@ -52,6 +52,19 @@ namespace TicTacToe
             {
                 GetInput();
             }
+        }
+        public static int checkInput()
+        {
+            bool test;
+            int num;
+            do {
+                test = Int32.TryParse(Console.ReadLine(), out num);
+                if (num < 0 || num >2)
+                {
+                    test = false;
+                }
+            } while (!test);
+            return num;
         }
         // Function to change back and forth between players
         public static void playerChange()
