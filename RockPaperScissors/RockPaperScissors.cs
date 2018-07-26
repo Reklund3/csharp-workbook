@@ -13,12 +13,11 @@ namespace RockPaperScissors
             string playerHand = System.String.Empty;
             string compHand = System.String.Empty;
             string[] compOptions = { "rock", "paper", "scissors" };
-            
             // Main game loop, continues until the getContinue function returns a false
             do
             {
                 playerHand = getHand(compOptions);
-                compHand = compOptions[rand.Next(0,2)];
+                compHand = compOptions[rand.Next(0,3)];
                 Console.WriteLine(compHand);
                 Console.WriteLine(CompareHands(playerHand, compHand, ref playerScore, ref computerScore));
                 Console.WriteLine("Player score: {0} Computers score: {1}", playerScore, computerScore);
@@ -45,7 +44,7 @@ namespace RockPaperScissors
             {
                 return "It's a tie!!!!";
             }
-            else if (pHand == "rock" && cHand == "scissor")
+            else if (pHand == "rock" && cHand == "scissors")
             {
                 pS += 1;
                 return "YOU WIN!!!!";
