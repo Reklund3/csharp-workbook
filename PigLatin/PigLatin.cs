@@ -9,7 +9,6 @@ namespace PigLatin
         {
             // your code goes here
             int wordCount = 0;
-            string repeat = System.String.Empty;
             string finalWord = System.String.Empty;
             Console.WriteLine("Enter a word or phrase!");
             string[] pigWord = Console.ReadLine().Split(' ');
