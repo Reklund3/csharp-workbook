@@ -16,12 +16,23 @@ namespace RockPaperScissors
             // Main game loop, continues until the getContinue function returns a false
             do
             {
-                playerHand = getHand(compOptions);
-                compHand = compOptions[rand.Next(0,3)];
-                Console.WriteLine(compHand);
-                Console.WriteLine(CompareHands(playerHand, compHand, ref playerScore, ref computerScore));
-                Console.WriteLine("Player score: {0} Computers score: {1}", playerScore, computerScore);
-                play = getContinue();
+                playerHand = System.String.Empty;
+                try
+                {
+                    playerHand = getHand(compOptions);
+                    Console.WriteLine("You have entered " + playerHand);
+                    compHand = compOptions[rand.Next(0,3)];
+                    Console.WriteLine(compHand);
+                    Console.WriteLine(CompareHands(playerHand, compHand, ref playerScore, ref computerScore));
+                    Console.WriteLine("Player score: {0} Computers score: {1}", playerScore, computerScore);
+                }
+                catch
+                {
+                    Console.WriteLine("We are sorry, something went wrong.");
+                }
+                finally{
+                    play = getContinue();
+                }
             } while (play == true);
         }
 
@@ -70,18 +81,15 @@ namespace RockPaperScissors
         // Function to get users rock, paper, or scissor input
         // calls the function recursively until a valid input is 
         // entered
-        public static string getHand(string[] compOptions)
+        public static string getHand(string[] options)
         {
             Console.WriteLine("Please enter Rock, Paper, or Scissors:");
-            string playerHand = Console.ReadLine().ToLower();
-            for( int i = 0; i < compOptions.Length; i++)
+            string playerHand = Console.ReadLine().Trim().ToLower();
+            if (playerHand != options[0] && playerHand != options[1] && playerHand != options[2])
             {
-                if (playerHand == compOptions[i])
-                {
-                    return playerHand;
-                }   
+                throw new Exception();
             }
-            return getHand(compOptions);
+            return playerHand;
         }
         
         // Function to get the users input for another round.
