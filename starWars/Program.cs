@@ -18,29 +18,35 @@ namespace starWars
 			spaceStationOne.dockShip(falcon,0);
 			spaceStationOne.dockShip(tie,1);
 			Console.WriteLine(spaceStationOne.Ships);
+			spaceStationOne.undock(0);
+			Console.WriteLine(spaceStationOne.Ships);
+
         }
     }
 }
-
+// Definition of Person Class
 class Person
 {
 	private string firstName;
 	private string lastName;
 	private string alliance;
+	// Person constructor, takes in First and Last name, and alliance 
+	// then sets variables for the created object
 	public Person(string firstName, string lastName, string alliance)
 	{
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.alliance = alliance;
 	}
-
+	// function to return the Persons full name
 	public string FullName
 	{
 		get
 		{
 			return this.firstName + " " + this.lastName;
 		}
-
+		// set name handler to convert a single string name to
+		// first and last, for example if "Luke Skywalker" is passed in.
 		set
 		{
 			string[] names = value.Split(' ');
@@ -52,6 +58,8 @@ class Person
 class Ship
 {
 	private Person[] passengers;
+	// Ship constructor, takes in ship name, ship alliance, ship type or modus operandi,
+	// and ships capacity to seat Persons
 	public Ship(string ship, string alliance, string type, int size)
 	{
         this.shipName = ship;
@@ -63,6 +71,7 @@ class Ship
     public string shipName { get; private set; }
 	public string Type { get; private set; }
 	public string Alliance { get; private set; }
+	// Lists each people currently aboard the ship and displays this on the console
 	public string Passengers
 	{
 		get
@@ -98,6 +107,7 @@ class Station
 	}
     public string stationName { get; set; }
 	public string Alliance { get; set; }
+	// displays the ships, and their crew, docked at the station
 	public string Ships
 	{
 		get
