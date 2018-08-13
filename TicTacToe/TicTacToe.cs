@@ -118,7 +118,7 @@ namespace TicTacToe
             }
             return false;
         }
-        // Function to test horizontal win consitions
+        // Function to test horizontal win conditions
         // loops through the array until with a length of 3
         public static bool HorizontalWin()
         {
@@ -127,9 +127,9 @@ namespace TicTacToe
             {
                 if (board[i][0] == board[i][1] && board[i][1] == board[i][2])
                 {
-                    if (board[i][0] == " " || board[i][1] == " " || board[i][2] == " ")
+                    if (board[i][0] == " ")
                     {
-                        
+                        return false;
                     }
                     else
                     {
@@ -148,7 +148,7 @@ namespace TicTacToe
             {
                 if (board[0][i] == board[1][i] && board[1][i] == board[2][i])
                 {
-                    if (board[0][i] == " " || board[1][i] == " " || board[2][i] == " ")
+                    if (board[0][i] == " ")
                     {
                         
                     }
@@ -167,9 +167,9 @@ namespace TicTacToe
             // your code goes here
             if (board[0][0] == board[1][1] && board[1][1] == board[2][2])
             {
-                if (board[0][0] == " " || board[1][1] == " " || board[2][2] == " ")
+                if (board[0][0] == " ")
                 {
-                    
+                    return false;
                 }
                 else {
                     return true;
@@ -177,9 +177,9 @@ namespace TicTacToe
             }
             if (board[0][2] == board[1][1] && board[1][1] == board[2][0])
             {
-                if (board[0][2] == " " || board[1][1] == " " || board[2][0] == " ")
+                if (board[0][2] == " ")
                 {
-                    
+                    return false;
                 }
                 else {
                     return true;
