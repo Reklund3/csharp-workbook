@@ -65,21 +65,18 @@ namespace checkpoint1
         public static void factorial()
         {
             int num = 0;
-            int num1 = 0;
-            int factorial = 0;
+            int factorial = 1;
             bool test = false;
             do 
             {
                 Console.WriteLine("Please enter a whole number to factor!");
                 test = int.TryParse(Console.ReadLine(), out num);
-                factorial = num1 = num;
             } while (!test);
-            for (int i = 0; i <= num; ++i)
+            for (int i = 2; i <= num; ++i)
             {
-                num--;
-                factorial = factorial * num;
+                factorial = factorial * i;
             }
-            Console.WriteLine("The factorial of {0} is: {1}", num1, factorial);
+            Console.WriteLine("The factorial of {0} is: {1}", num, factorial);
         }
 
         public static void randomTest()
