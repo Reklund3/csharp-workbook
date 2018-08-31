@@ -8,8 +8,8 @@ namespace Mastermind {
         {
             int numTries = 0;
             getTries(ref numTries);
-            Game game = new Game (generateRandomCode());
-            for (int turns = numTries; turns > 0; turns--) {
+            Game game = new Game (generateRandomCode(), numTries);
+            for (int turns = game.numTries; turns > 0; turns--) {
                 Console.WriteLine($"You have {turns} tries left");
                 Console.WriteLine ("Choose four letters: ");
                 string letters = Console.ReadLine ();
@@ -77,9 +77,11 @@ namespace Mastermind {
     {
         private List<Row> rows = new List<Row> ();
         private string[] answer = new string[4];
-        public Game (string[] answer)
+        public int numTries { get; private set;}
+        public Game (string[] answer, int numTries)
         {
             this.answer = answer;
+            this.numTries = numTries;
         }
         private string Score (Row row)
         {
