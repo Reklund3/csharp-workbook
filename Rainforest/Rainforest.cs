@@ -8,42 +8,8 @@ namespace Rainforest
         static void Main(string[] args)
         {
             Company company = new Company("Rainforest");
-            Warehouse warehouseOne = new Warehouse("Austin", 5);
-            Warehouse warehouseTwo = new Warehouse("New York", 2);
-            Warehouse warehouseThree = new Warehouse("Montreal", 7);
-            Container containerOne = new Container("Austin-01", 5);
-            Container containerTwo = new Container("Austin-02", 5);
-            Container containerThree = new Container("NewYork-01", 5);
-            Container containerFour = new Container("Dallas-01", 5);
-            Container containerFive = new Container("Dallas-02", 5);
-            Dictionary<Item, Container> catalog = new Dictionary<Item, Container>();
-            Item banana = new Item("Banana", 0.49);
-            Item popTarts = new Item("Pop Tarts", 3.99);
-            Item pizza = new Item("Frozen Pizza", 4.99);
-            Item orangeJuice = new Item("Orange Juice", 2.49);
-            Item bread = new Item("Bread", 0.79);
-            Item drPepper = new Item("Dr Peper 12 Pack", 4.49);
-            Item redbull = new Item("RedBull", 7.99);
-            Item strawberries = new Item("Strawberries", 0.89);
             
-
-            company.addWarehouse(warehouseOne);
-            company.addWarehouse(warehouseTwo);
-            company.addWarehouse(warehouseThree);
-            warehouseOne.addContainter(containerOne);
-            warehouseOne.addContainter(containerTwo);
-            warehouseTwo.addContainter(containerThree);
-            warehouseThree.addContainter(containerFour);
-            warehouseThree.addContainter(containerFive);
-
-            catalog.Add(banana, containerOne);
-            catalog.Add(popTarts, containerTwo);
-            catalog.Add(pizza, containerTwo);
-            catalog.Add(orangeJuice, containerThree);
-            catalog.Add(bread, containerFour);
-            catalog.Add(drPepper, containerFive);
-            catalog.Add(redbull, containerFive);
-            catalog.Add(strawberries, containerFive);
+            
 
             do
             {
@@ -53,68 +19,65 @@ namespace Rainforest
                 Console.WriteLine("Please select a what you would like to do");
                 try
                 {
-                    outputFunc(Console.ReadLine(), ref catalog, ref company);
+                    company.outputFunc(Console.ReadLine(), ref company);
                 }
-                catch
+                catch (Exception e)
                 {
-                    Console.WriteLine("That is an invalid entry, please try again.");
+                    Console.WriteLine(e);
                 }
             } while(true);
         }
 
-        public static void outputFunc(string userEntry, ref Dictionary<Item, Container> catalog, ref Company company)
-        {   
-            int userMenuSelection = 0;
-            if (Int32.TryParse(userEntry, out userMenuSelection))
-            {
-                if (userMenuSelection == 1)
-                {
-                    Console.Clear();
-                    Console.WriteLine(company.listWarehouses());
-                }
-                else if (userMenuSelection == 2)
-                {
-                    Console.WriteLine("Please enter an item you would like to find.");
-                    itemSearch(Console.ReadLine(), ref catalog);
-                }
-                else
-                {
-                    throw new Exception("Menu item doesn't exist.");
-                }
-            }
-            else
-            {
-                throw new Exception("Not a valid entry");
-            }
-        }
+        
+        
 
-        public static void itemSearch(string seekItem, ref Dictionary<Item, Container> catalog)
-        {
-            foreach (Item item in catalog.Keys)
-            {
-                if (item.name == seekItem)
-                {
-                    Console.WriteLine("Item located at in container {0}", catalog[item].containerID);
-                }
-                else
-                {
-                    throw new Exception("The item doesn't exist in the catalog");
-                }
-            }
-        }
+        
 
         public class Company
         {
             private List<Warehouse> warehouses;
+            Dictionary<Item, Container> catalog;
             public string companyName {get; private set;}
             public Company(string companyName)
             {
                 this.companyName = companyName;
                 this.warehouses = new List<Warehouse>();
-            }
-            public void addWarehouse(Warehouse warehouse)
-            {
-                this.warehouses.Add(warehouse);
+                Warehouse warehouseOne = new Warehouse("Austin", 5);
+                Warehouse warehouseTwo = new Warehouse("New York", 2);
+                Warehouse warehouseThree = new Warehouse("Montreal", 7);
+                Container containerOne = new Container("Austin-01", 5);
+                Container containerTwo = new Container("Austin-02", 5);
+                Container containerThree = new Container("NewYork-01", 5);
+                Container containerFour = new Container("Dallas-01", 5);
+                Container containerFive = new Container("Dallas-02", 5);
+                catalog = new Dictionary<Item, Container>();
+                Item banana = new Item("Banana", 0.49);
+                Item popTarts = new Item("Pop Tarts", 3.99);
+                Item pizza = new Item("Frozen Pizza", 4.99);
+                Item orangeJuice = new Item("Orange Juice", 2.49);
+                Item bread = new Item("Bread", 0.79);
+                Item drPepper = new Item("Dr Peper 12 Pack", 4.49);
+                Item redbull = new Item("RedBull", 7.99);
+                Item strawberries = new Item("Strawberries", 0.89);
+                
+
+                warehouses.Add(warehouseOne);
+                warehouses.Add(warehouseTwo);
+                warehouses.Add(warehouseThree);
+                warehouseOne.addContainter(containerOne);
+                warehouseOne.addContainter(containerTwo);
+                warehouseTwo.addContainter(containerThree);
+                warehouseThree.addContainter(containerFour);
+                warehouseThree.addContainter(containerFive);
+
+                catalog.Add(banana, containerOne);
+                catalog.Add(popTarts, containerTwo);
+                catalog.Add(pizza, containerTwo);
+                catalog.Add(orangeJuice, containerThree);
+                catalog.Add(bread, containerFour);
+                catalog.Add(drPepper, containerFive);
+                catalog.Add(redbull, containerFive);
+                catalog.Add(strawberries, containerFive);
             }
             public string listWarehouses()
             {
@@ -124,6 +87,53 @@ namespace Rainforest
                     warehouse.listContainers();
                 }
                 return "";
+            }
+            public void outputFunc(string userEntry, ref Company company)
+            {   
+                int userMenuSelection = 0;
+                if (Int32.TryParse(userEntry, out userMenuSelection))
+                {
+                    if (userMenuSelection == 1)
+                    {
+                        Console.Clear();
+                        Console.WriteLine(company.listWarehouses());
+                    }
+                    else if (userMenuSelection == 2)
+                    {
+                        Console.WriteLine("Please enter an item you would like to find.");
+                        itemSearch(Console.ReadLine());
+                    }
+                    else
+                    {
+                        throw new Exception("Menu item doesn't exist.");
+                    }
+                }
+                else
+                {
+                    throw new Exception("Not a valid entry");
+                }
+            }
+            public void itemSearch(string seekItem)
+            {
+                List<string> locations = new List<string>();
+                foreach (Item item in catalog.Keys)
+                {
+                    if (item.name.ToLower() == seekItem.ToLower())
+                    {
+                        locations.Add("Item located at in container " + catalog[item].containerID);
+                    }
+                }
+                if (locations.Count == 0)
+                {
+                    throw new Exception("The item was not found in the store");
+                }
+                else
+                {
+                    foreach (string loc in locations)
+                    {
+                        Console.WriteLine(loc);
+                    }
+                }
             }
         }
         public class Warehouse
