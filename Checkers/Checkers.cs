@@ -16,10 +16,9 @@ namespace Checkers
                     game.inputCoords();
                     game.movePiece();
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
-                    // "Invalid move or position, please try again"
-                    Console.WriteLine(e);
+                    Console.WriteLine("Invalid move or position, please try again");
                 }
             } while (!game.CheckForWin());
         }
