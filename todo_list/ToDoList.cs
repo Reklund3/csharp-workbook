@@ -6,10 +6,14 @@ namespace todo_list
     class ToDoList
     {
         List<ToDoItem> toDos;
+        bool runProgram = true;
         public ToDoList()
         {
             toDos = new List<ToDoItem>();
-            userOptions();
+            do
+            {
+                userOptions();
+            } while(runProgram);
         }
         public void userOptions()
         {
@@ -22,6 +26,14 @@ namespace todo_list
             System.Console.WriteLine("4) Delete Task\n");
             displayList();
             System.Console.WriteLine("");
+            try
+            {
+                getUserOption();
+            }
+            catch (Exception)
+            {
+                System.Console.WriteLine("That was not a valid ToDo List Option");
+            }
         }
         void displayList()
         {
@@ -30,6 +42,26 @@ namespace todo_list
             foreach (ToDoItem item in toDos)
             {
                 System.Console.WriteLine(item.taskName);
+            }
+        }
+        int getUserOption()
+        {
+            int[] options = {1,2,3,4};
+            int userOption;
+            if(Int32.TryParse(Console.ReadLine(),out userOption))
+            {
+                if(options.Contains(userOption))
+                {
+                    return userOption;
+                }
+                else
+                {
+                    throw new Exception("The entry was not in the option range.");
+                }
+            }
+            else
+            {
+                throw new Exception("The entry was not a valid number.");
             }
         }
     }
