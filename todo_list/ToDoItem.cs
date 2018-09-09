@@ -13,14 +13,15 @@ namespace todo_list
             setTaskName();
             setTaskDetail();
         }
-        public void setTaskName()
+        void setTaskName()
         {
             do{
                 try
                 {
-                    System.Console.WriteLine("Please enter the please handle item.");
+                    System.Console.WriteLine("Please enter the TasK Name.");
                     System.Console.WriteLine("There is a character limit of 30");
                     this.taskName = getInput(30);
+                    break;
                 }
                 catch (Exception)
                 {
@@ -28,14 +29,15 @@ namespace todo_list
                 }
             } while(true);
         }
-        public void setTaskDetail()
+        void setTaskDetail()
         {
             do{
                 try
                 {
-                    System.Console.WriteLine("Please enter the please handle item.");
-                    System.Console.WriteLine("There is a character limit of 30");
-                    this.taskName = getInput(30);
+                    System.Console.WriteLine("Please enter the Task Detail.");
+                    System.Console.WriteLine("There is a character limit of 255");
+                    this.taskDetail = getInput(255);
+                    break;
                 }
                 catch (Exception)
                 {
@@ -43,7 +45,7 @@ namespace todo_list
                 }
             } while(true);
         }
-        public string getInput(int stringLength)
+        string getInput(int stringLength)
         {
             string userInput = Console.ReadLine();
             if (userInput.Length > stringLength)

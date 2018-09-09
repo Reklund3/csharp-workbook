@@ -18,17 +18,18 @@ namespace todo_list
         public void userOptions()
         {
             Console.Clear();
+            displayList();
+            System.Console.WriteLine("");
             System.Console.WriteLine("Welcome to your ToDo List");
             System.Console.WriteLine("-------- Options --------");
             System.Console.WriteLine("1) Create Task");
             System.Console.WriteLine("2) Read Details");
             System.Console.WriteLine("3) Update Details");
-            System.Console.WriteLine("4) Delete Task\n");
-            displayList();
-            System.Console.WriteLine("");
+            System.Console.WriteLine("4) Delete Task");
+            System.Console.WriteLine("5) Exit To Do Application \n");
             try
             {
-                getUserOption();
+                handleOption(getUserOption());
             }
             catch (Exception)
             {
@@ -46,13 +47,13 @@ namespace todo_list
         }
         int getUserOption()
         {
-            int[] options = {1,2,3,4};
-            int userOption;
-            if(Int32.TryParse(Console.ReadLine(),out userOption))
+            int userNum;
+            List<int> inputOptions = new List<int>() {1,2,3,4,5};
+            if(Int32.TryParse(Console.ReadLine(),out userNum))
             {
-                if(options.Contains(userOption))
+                if(inputOptions.Contains(userNum))
                 {
-                    return userOption;
+                    return userNum;
                 }
                 else
                 {
@@ -62,6 +63,45 @@ namespace todo_list
             else
             {
                 throw new Exception("The entry was not a valid number.");
+            }
+        }
+        void handleOption(int option)
+        {
+            if (option == 1)
+            {
+                addTask();
+            }
+            else if (option == 2)
+            {
+                //readTask();
+            }
+            else if (option == 3)
+            {
+                //updateTask();
+            }
+            else if (option == 4)
+            {
+                //deleteTask();
+            }
+            else if (option == 5)
+            {
+                System.Console.WriteLine("Exiting program");
+                this.runProgram =false;
+            }
+            else
+            {
+                throw new Exception("No Option was selected");
+            }
+        }
+        void addTask()
+        {
+            try
+            {
+                toDos.Add(new ToDoItem());
+            }
+            catch
+            {
+                System.Console.WriteLine("There was a problem adding the task!");
             }
         }
     }
