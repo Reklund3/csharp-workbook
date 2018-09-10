@@ -17,7 +17,7 @@ namespace todo_list
         }
         public void userOptions()
         {
-            Console.Clear();
+            //Console.Clear();
             displayList();
             System.Console.WriteLine("");
             System.Console.WriteLine("Welcome to your ToDo List");
@@ -31,18 +31,18 @@ namespace todo_list
             {
                 handleOption(getUserOption());
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 System.Console.WriteLine("That was not a valid ToDo List Option");
             }
         }
         void displayList()
         {
-            System.Console.WriteLine("  T a s k  ");
-            System.Console.WriteLine("-----------");
+            System.Console.WriteLine("|  I D  |  T a s k  |  D e s c r i p t i o n  |");
+            System.Console.WriteLine("|-------|-----------|-------------------------|");
             foreach (ToDoItem item in toDos)
             {
-                System.Console.WriteLine(item.taskName);
+                System.Console.WriteLine("   {0}    |  {1}  |", item.taskID, item.taskName);
             }
         }
         int getUserOption()
@@ -81,12 +81,12 @@ namespace todo_list
             }
             else if (option == 4)
             {
-                //deleteTask();
+                deleteTask();
             }
             else if (option == 5)
             {
                 System.Console.WriteLine("Exiting program");
-                this.runProgram =false;
+                this.runProgram = false;
             }
             else
             {
@@ -97,11 +97,57 @@ namespace todo_list
         {
             try
             {
-                toDos.Add(new ToDoItem());
+                if (toDos.Count == 0)
+                {
+                    toDos.Add(new ToDoItem(1));
+                }
+                else
+                {
+                    toDos.Add(new ToDoItem(toDos.Count + 1));
+                }
             }
             catch
             {
                 System.Console.WriteLine("There was a problem adding the task!");
+            }
+        }
+        void readTask()
+        {
+
+        }
+        void updateTask()
+        {
+
+        }
+        void deleteTask()
+        {
+            System.Console.WriteLine("Please enter the task number you would like to delete");
+            try
+            {
+                this.userTaskDelete(Console.ReadLine());
+            }
+            catch(Exception e)
+            {
+                System.Console.WriteLine(" That was not a valid task to delete");
+            }
+        }
+        void userTaskDelete(string userInput)
+        {
+            int userInt;
+            if (Int32.TryParse(userInput, out userInt))
+            {
+                if(toDos.Count >= userInt)
+                {
+                    this.toDos.RemoveAt(userInt-1);
+                }
+                else
+                {
+                    throw new Exception("The number was not in the list");
+                }
+            }
+            else
+            {
+                throw new Exception("A number was not entered for the item id of the list");
             }
         }
     }

@@ -5,11 +5,13 @@ namespace todo_list
 {
     class ToDoItem
     {
+        public int taskID { get; private set; }
         public string taskName { get; private set; }
         public string taskDetail { get; private set; }
         public DateTime dueDate { get; private set; }
-        public ToDoItem()
+        public ToDoItem(int taskID)
         {
+            this.taskID = taskID;
             setTaskName();
             setTaskDetail();
         }
