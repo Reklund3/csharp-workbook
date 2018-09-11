@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace todo_list
+﻿namespace todo_list
 {
     class Program
     {

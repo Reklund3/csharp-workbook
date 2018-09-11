@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore.Sqlite;
 
 namespace todo_list
 {
@@ -17,7 +18,7 @@ namespace todo_list
         }
         public void userOptions()
         {
-            //Console.Clear();
+            Console.Clear();
             displayList();
             System.Console.WriteLine("");
             System.Console.WriteLine("Welcome to your ToDo List");
@@ -31,7 +32,7 @@ namespace todo_list
             {
                 handleOption(getUserOption());
             }
-            catch (Exception e)
+            catch
             {
                 System.Console.WriteLine("That was not a valid ToDo List Option");
             }
@@ -42,7 +43,7 @@ namespace todo_list
             System.Console.WriteLine("|-------|-----------|-------------------------|");
             foreach (ToDoItem item in toDos)
             {
-                System.Console.WriteLine("   {0}    |  {1}  |", item.taskID, item.taskName);
+                System.Console.WriteLine("|   {0}   |  {1}  |  {2}             |", item.taskID, item.taskName, item.taskDetail);
             }
         }
         int getUserOption()
@@ -126,7 +127,7 @@ namespace todo_list
             {
                 this.userTaskDelete(Console.ReadLine());
             }
-            catch(Exception e)
+            catch
             {
                 System.Console.WriteLine(" That was not a valid task to delete");
             }
