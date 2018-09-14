@@ -3,27 +3,30 @@ using System;
 
 namespace todo_list
 {
-    class ToDoItem
+    public class ToDoItem
     {
-        public int taskID { get; private set; }
-        public string taskName { get; private set; }
-        public string taskDetail { get; private set; }
-        public DateTime dueDate { get; private set; }
-        public ToDoItem(int taskID)
+        public int Id { get; private set; }
+        public string taskName { get; set; }
+        public string taskDetail { get; set; }
+        public DateTime dueDate { get; set; }
+        public static ToDoItem createTask()
         {
-            this.taskID = taskID;
-            setTaskName();
-            setTaskDetail();
+            string taskName = getTaskName();
+            string taskDetail = getTaskDetail();
+            ToDoItem item = new ToDoItem();
+            item.taskName = taskName;
+            item.taskDetail = taskDetail;
+            return item;
         }
-        void setTaskName()
+        static string getTaskName()
         {
-            do{
+            do
+            {
                 try
                 {
                     System.Console.WriteLine("Please enter the TasK Name.");
                     System.Console.WriteLine("There is a character limit of 30");
-                    this.taskName = getInput(30);
-                    break;
+                    return getInput(30);
                 }
                 catch (Exception)
                 {
@@ -31,15 +34,14 @@ namespace todo_list
                 }
             } while(true);
         }
-        void setTaskDetail()
+        static string getTaskDetail()
         {
             do{
                 try
                 {
                     System.Console.WriteLine("Please enter the Task Detail.");
                     System.Console.WriteLine("There is a character limit of 255");
-                    this.taskDetail = getInput(255);
-                    break;
+                    return getInput(255);
                 }
                 catch (Exception)
                 {
@@ -47,7 +49,7 @@ namespace todo_list
                 }
             } while(true);
         }
-        string getInput(int stringLength)
+        static string getInput(int stringLength)
         {
             string userInput = Console.ReadLine();
             if (userInput.Length > stringLength)

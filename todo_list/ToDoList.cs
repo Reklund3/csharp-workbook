@@ -1,15 +1,21 @@
 using System;
 using System.Collections.Generic;
-using Microsoft.EntityFrameworkCore.Sqlite;
+using Microsoft.EntityFrameworkCore;
+using System.Linq;
 
 namespace todo_list
 {
-    class ToDoList
+    public class ToDoList
     {
         List<ToDoItem> toDos;
         bool runProgram = true;
+        ToDoListContext toDoContext;
         public ToDoList()
         {
+            toDoContext = new ToDoListContext();
+            //toDoContext.Database.EnsureDeleted();
+            toDoContext.Database.EnsureCreated();
+            
             toDos = new List<ToDoItem>();
             do
             {
@@ -18,13 +24,12 @@ namespace todo_list
         }
         public void userOptions()
         {
-            Console.Clear();
-            displayList();
+            // Console.Clear();
             System.Console.WriteLine("");
             System.Console.WriteLine("Welcome to your ToDo List");
             System.Console.WriteLine("-------- Options --------");
             System.Console.WriteLine("1) Create Task");
-            System.Console.WriteLine("2) Read Details");
+            System.Console.WriteLine("2) Get To Do List");
             System.Console.WriteLine("3) Update Details");
             System.Console.WriteLine("4) Delete Task");
             System.Console.WriteLine("5) Exit To Do Application \n");
@@ -39,11 +44,14 @@ namespace todo_list
         }
         void displayList()
         {
+            var results = from item in toDoContext.to_do_item
+            select item;
+            Console.Clear();
             System.Console.WriteLine("|  I D  |  T a s k  |  D e s c r i p t i o n  |");
             System.Console.WriteLine("|-------|-----------|-------------------------|");
-            foreach (ToDoItem item in toDos)
+            foreach (ToDoItem item in results)
             {
-                System.Console.WriteLine("|   {0}   |  {1}  |  {2}             |", item.taskID, item.taskName, item.taskDetail);
+                System.Console.WriteLine("|   {0}   |  {1}  |  {2}             |", item.Id, item.taskName, item.taskDetail );
             }
         }
         int getUserOption()
@@ -74,7 +82,7 @@ namespace todo_list
             }
             else if (option == 2)
             {
-                //readTask();
+                readTask();
             }
             else if (option == 3)
             {
@@ -86,35 +94,29 @@ namespace todo_list
             }
             else if (option == 5)
             {
-                System.Console.WriteLine("Exiting program");
+                System.Console.WriteLine(" Exiting program. ");
                 this.runProgram = false;
             }
             else
             {
-                throw new Exception("No Option was selected");
+                throw new Exception(" No Option was selected. ");
             }
         }
         void addTask()
         {
             try
             {
-                if (toDos.Count == 0)
-                {
-                    toDos.Add(new ToDoItem(1));
-                }
-                else
-                {
-                    toDos.Add(new ToDoItem(toDos.Count + 1));
-                }
+                toDoContext.to_do_item.Add(ToDoItem.createTask());
+                toDoContext.SaveChanges();
             }
             catch
             {
-                System.Console.WriteLine("There was a problem adding the task!");
+                System.Console.WriteLine(" There was a problem adding the task! ");
             }
         }
         void readTask()
         {
-
+            displayList();
         }
         void updateTask()
         {
@@ -122,34 +124,39 @@ namespace todo_list
         }
         void deleteTask()
         {
-            System.Console.WriteLine("Please enter the task number you would like to delete");
+            System.Console.WriteLine(" Please enter the task number you would like to delete. ");
             try
             {
                 this.userTaskDelete(Console.ReadLine());
             }
             catch
             {
-                System.Console.WriteLine(" That was not a valid task to delete");
+                System.Console.WriteLine(" That was not a valid task to delete! ");
             }
         }
         void userTaskDelete(string userInput)
-        {
+        {            
             int userInt;
             if (Int32.TryParse(userInput, out userInt))
             {
-                if(toDos.Count >= userInt)
+                if(toDoContext.to_do_item.Find(userInt) != null)
                 {
-                    this.toDos.RemoveAt(userInt-1);
+                    toDoContext.to_do_item.Remove(getItemById(userInt));
+                    toDoContext.SaveChanges();
                 }
                 else
                 {
-                    throw new Exception("The number was not in the list");
+                    throw new Exception(" The number was not in the list. ");
                 }
             }
             else
             {
-                throw new Exception("A number was not entered for the item id of the list");
+                throw new Exception(" A number was not entered for the item id of the list. ");
             }
+        }
+        ToDoItem getItemById(int taskId)
+        {
+            return toDoContext.to_do_item.Find(taskId);
         }
     }
 }
