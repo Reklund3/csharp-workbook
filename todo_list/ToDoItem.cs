@@ -9,6 +9,7 @@ namespace todo_list
         public string taskName { get; set; }
         public string taskDetail { get; set; }
         public DateTime dueDate { get; set; }
+        public bool taskComplete {get; set; }
         public static ToDoItem createTask()
         {
             string taskName = getTaskName();

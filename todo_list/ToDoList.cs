@@ -32,34 +32,63 @@ namespace todo_list
             System.Console.WriteLine("2) Get To Do List");
             System.Console.WriteLine("3) Update Details");
             System.Console.WriteLine("4) Delete Task");
-            System.Console.WriteLine("5) Exit To Do Application \n");
+            System.Console.WriteLine("5) Complete / Incomplete Task");
+            System.Console.WriteLine("6) Exit To Do Application \n");
             try
             {
-                handleMainMenuOption(getUserOption(5));
+                handleMainMenuOption(getUserOption(6));
             }
             catch
             {
                 System.Console.WriteLine("That was not a valid ToDo List Option");
             }
         }
+        int fieldLength(List<ToDoItem> list, bool x)
+        {
+            int len = 0;
+            foreach (ToDoItem item in list)
+            {
+                if (x)
+                {
+                    if (item.taskName.Length > len)
+                    {
+                        len = item.taskName.Length;
+                    }
+                }
+                else if (!x)
+                {
+                    if (item.taskName.Length > len)
+                    {
+                        len = item.taskDetail.Length;
+                    }
+                }
+            }
+            return len;
+        }
         void displayList()
         {
             var results = from item in toDoContext.to_do_item
             select item;
-            int taskNameLength = 0;
-            int taskDetailLength = 0;
-            foreach (ToDoItem item in results)
+            List<ToDoItem> itemsList = new List<ToDoItem>();
+            itemsList = results.ToList();
+            System.Console.WriteLine("Would you like to see all To Do Task? If so enter \"Y\"");
+            System.Console.WriteLine("If you would like to see only To Do Tasks that are not complete enter \"N\"");
+            if (!yesNoInput(Console.ReadLine()))
             {
-                if (item.taskName.Length > taskNameLength)
+                foreach (ToDoItem item in results)
                 {
-                    taskNameLength = item.taskName.Length;
-                }
-                if (item.taskDetail.Length > taskDetailLength)
-                {
-                    taskDetailLength = item.taskDetail.Length;
+                    if (item.taskComplete == true)
+                    {
+                        System.Console.WriteLine("delete");
+                        itemsList.RemoveAt(item.Id-1);
+                    }
                 }
             }
-            Console.Clear();
+            int taskNameLength = fieldLength(itemsList, true);
+            int taskDetailLength = fieldLength(itemsList, false);
+            
+            //Console.Clear();
+            //header names
             System.Console.Write("|  I D  |");
             for (int i = 0; i < (taskNameLength/2)-1; i++)
             {
@@ -75,47 +104,55 @@ namespace todo_list
             {
                 System.Console.Write(" ");
             }
-            System.Console.Write("D e t a i l s");
+            System.Console.Write("  D E T A I L S  ");
             for (int i = 0; i < (taskDetailLength/2)-1; i++)
             {
                 System.Console.Write(" ");
             }
-            System.Console.WriteLine("|");
-
+            System.Console.WriteLine("| S T A T U S |");
+            //header line break
             System.Console.Write("|-------|");
-            
-            for (int i = 0; i < (taskNameLength/2)-1; i++)
-            {
-                System.Console.Write("-");
-            }
-            System.Console.Write("------");
-            for (int i = 0; i < (taskNameLength/2); i++)
+            for (int i = 0; i < (taskNameLength)+4; i++)
             {
                 System.Console.Write("-");
             }
             System.Console.Write("|");
-            for (int i = 0; i < (taskDetailLength/2); i++)
+            for (int i = 0; i < (taskDetailLength)+14; i++)
             {
                 System.Console.Write("-");
             }
-            System.Console.Write("-------------");
-            for (int i = 0; i < (taskDetailLength/2)-1; i++)
-            {
-                System.Console.Write("-");
-            }
-            System.Console.WriteLine("|");
+            System.Console.WriteLine("|-------------|");
             
-            foreach (ToDoItem item in results)
+            // display todo items spaced on max
+            foreach (ToDoItem item in itemsList)
             {
-                System.Console.WriteLine("|   {0}   |  {1}  |  {2}             |", item.Id, item.taskName, item.taskDetail );
+                System.Console.Write("|   {0}   |",item.Id);
+                System.Console.Write("  {0}  ",item.taskName);
+                for (int i = 0; i < (taskNameLength-item.taskName.Length); i++)
+                {
+                    System.Console.Write(" ");
+                }
+                System.Console.Write("|");
+                System.Console.Write("  {0}  ",item.taskDetail);
+                for (int i = 0; i < (taskDetailLength-item.taskDetail.Length)+10; i++)
+                {
+                    System.Console.Write(" ");
+                }
+                System.Console.Write("|");
+                System.Console.Write(" {0} ",item.taskComplete == true ? "Done" : "    " );
+                for(int i = 0; i < 7; i++)
+                {
+                    System.Console.Write(" ");
+                }
+                System.Console.WriteLine("|");
             }
         }
         void displayList(ToDoItem singleItem)
         {
             Console.Clear();
-            System.Console.WriteLine("|  I D  |  T a s k  |  D e s c r i p t i o n  |");
-            System.Console.WriteLine("|-------|-----------|-------------------------|");
-            System.Console.WriteLine("|   {0}   |  {1}  |  {2}             |", singleItem.Id, singleItem.taskName, singleItem.taskDetail );
+            System.Console.WriteLine("|  I D  |  T a s k  |  D e s c r i p t i o n  | S T A T U S |");
+            System.Console.WriteLine("|-------|-----------|-------------------------|-------------|");
+            System.Console.WriteLine("|   {0}   |  {1}  |  {2}                 |    {3}     |", singleItem.Id, singleItem.taskName, singleItem.taskDetail, singleItem.taskComplete == true ? "Done" : "    " );
         }
         int getUserOption(int numberOfPasses)
         {
@@ -161,6 +198,10 @@ namespace todo_list
             }
             else if (option == 5)
             {
+                completeTaskChange();
+            }
+            else if (option == 6)
+            {
                 System.Console.WriteLine(" Exiting program. ");
                 this.runProgram = false;
             }
@@ -178,7 +219,7 @@ namespace todo_list
             }
             catch
             {
-                System.Console.WriteLine(" There was a problem adding the task! ");
+                System.Console.WriteLine(" An error was encountered when adding the task! ");
             }
         }
         void readTask()
@@ -293,14 +334,47 @@ namespace todo_list
         {
             return toDoContext.to_do_item.Find(taskId);
         }
+        void completeTaskChange()
+        {
+            int task;
+            System.Console.WriteLine("");
+            System.Console.WriteLine("Please select the task you wish to complete or change back to incomplete.");
+            string taskNum = Console.ReadLine();
+            if (Int32.TryParse(taskNum, out task))
+            {
+                if (getItemById(task) != null)
+                {
+                    toDoContext.to_do_item.Update(getItemById(task));
+                    if (getItemById(task).taskComplete == true)
+                    {
+                        getItemById(task).taskComplete = false;
+                    }
+                    else if (getItemById(task).taskComplete == false)
+                    {
+                        getItemById(task).taskComplete = true;
+                    }
+                    toDoContext.SaveChanges();
+                }
+                else
+                {
+                    throw new Exception("there is no task at that record");
+                }
+            }
+            else
+            {
+                throw new Exception("The entry was not a integer");
+            }
+        }
         bool yesNoInput(string userInput)
         {
             if (userInput.ToUpper() == "Y")
             {
+                System.Console.WriteLine("returned true");
                 return true;
             }
             else if (userInput.ToUpper() == "N")
             {
+                System.Console.WriteLine("returned false");
                 return false;
             }
             else
