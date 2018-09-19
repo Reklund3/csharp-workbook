@@ -76,30 +76,47 @@ namespace todo_list
             }
             return len;
         }
+        // function to return a list of the items pulled from the table.
+        // takes in a bool value to determine if the user wants only incomplete task or all tasks
+        public List<ToDoItem> queryStatus(bool incomplete)
+        {
+            var results = from item in toDoContext.to_do_item select item;
+            if(incomplete)
+            {
+                results = from item in toDoContext.to_do_item where (item.taskComplete == false) select item;
+                return results.ToList();
+            }
+            return results.ToList();
+        }
         void displayList()
         {
-            var results = from item in toDoContext.to_do_item //where (item.taskComplete == true) this needs to be added and remove all the list code. Also have this be a method that returns a var.
-            select item;
+            // list for storing the query results.
             List<ToDoItem> itemsList = new List<ToDoItem>();
-            itemsList = results.ToList();
-            System.Console.WriteLine("Would you like to see all To Do Task? If so enter \"Y\"");
-            System.Console.WriteLine("If you would like to see only To Do Tasks that are not complete enter \"N\"");
-            if (!yesNoInput(Console.ReadLine()))
+            // trys to get the users input to see if they want to list all tasks or incomplete tasks
+            try
             {
-                foreach (ToDoItem item in results)
+                System.Console.WriteLine("Would you like to see all incomplete To Do Tasks? If so enter \"Y\" or \"YES\".");
+                System.Console.WriteLine("If you would like to see only To Do Tasks that are not complete enter \"N\" or \"NO\".");
+                if (yesNoInput(Console.ReadLine()))
                 {
-                    if (item.taskComplete == true)
-                    {
-                        System.Console.WriteLine("delete");
-                        itemsList.RemoveAt(item.Id-1);
-                    }
+                    itemsList = queryStatus(true);
+                }
+                else
+                {
+                    itemsList = queryStatus(false);
                 }
             }
+            catch
+            {
+                System.Console.WriteLine("The entry was not a valid option returning to menu.");
+                System.Console.WriteLine();
+            }
+            // these variables are to determin the max length of the name and detail variables.
+            // this is used to format the column widths
             int taskNameLength = fieldLength(itemsList, true);
             int taskDetailLength = fieldLength(itemsList, false);
             
-            //Console.Clear();
-            //header names
+            //header names loops to center the header names in their respective columns
             System.Console.Write("|  I D  |");
             for (int i = 0; i < (taskNameLength/2)-1; i++)
             {
@@ -121,7 +138,7 @@ namespace todo_list
                 System.Console.Write(" ");
             }
             System.Console.WriteLine("| S T A T U S |");
-            //header line break
+            //header line break to create the header detail seperators for the table
             System.Console.Write("|-------|");
             for (int i = 0; i < (taskNameLength)+4; i++)
             {
@@ -134,7 +151,7 @@ namespace todo_list
             }
             System.Console.WriteLine("|-------------|");
             
-            // display todo items spaced on max
+            // display todo items spaced on the max width of the displayed items
             foreach (ToDoItem item in itemsList)
             {
                 System.Console.Write("|   {0}   |",item.Id);
@@ -245,9 +262,12 @@ namespace todo_list
         {
             displayList();
         }
-        // Function to update a 
+        // Function to update a user selected task.
         void updateTask()
         {
+            // tries to get the users item id, if a valid id is selected
+            // the handleTaskUpdate function is called to manage the users 
+            // requested changes.
             try
             {
                 int userNum;
@@ -258,17 +278,19 @@ namespace todo_list
                     updateItem = toDoContext.to_do_item.Find(userNum);
                     toDoContext.to_do_item.Update(updateItem);
                     updateItem = handleTaskUpdate(updateItem);
+                    toDoContext.SaveChanges();
                 }
-                toDoContext.SaveChanges();
             }
             catch
             {
                 System.Console.WriteLine("This was not a valid record to update. Please try again");
             }
         }
+        // function called when the user indicates that they would like to delete a task from their list.
         void deleteTask()
         {
             System.Console.WriteLine(" Please enter the task number you would like to delete. ");
+            // trys calling the delete function to remove the selected task id if it exists
             try
             {
                 userTaskDelete(Console.ReadLine());
@@ -278,11 +300,15 @@ namespace todo_list
                 System.Console.WriteLine(" That was not a valid task to delete! ");
             }
         }
+        // this is the task that is called by deleteTask, if the user input is a valid task id it will
+        // delete the task from the database and save.
         void userTaskDelete(string userInput)
         {            
             int userInt;
+            // checks if the user input is convertable to type integer
             if (Int32.TryParse(userInput, out userInt))
             {
+                // checks to see if the id entered contains a valid object to delete
                 if(toDoContext.to_do_item.Find(userInt) != null)
                 {
                     toDoContext.to_do_item.Remove(getItemById(userInt));
@@ -298,12 +324,15 @@ namespace todo_list
                 throw new Exception(" A number was not entered for the item id of the list. ");
             }
         }
+        // Is called by updateTask, first displays the selected task and contents
+        // asks the user if they would like to update the name and detail for the task.
         ToDoItem handleTaskUpdate(ToDoItem updateTask)
         {
             System.Console.WriteLine("");
             displayList(updateTask);
             System.Console.WriteLine("");
             System.Console.WriteLine("Would you like to change the Task Name \"Y\" or \"n\"?");
+            // if y is entered then the return is true and the following code is executed to update the task name
             if (yesNoInput(Console.ReadLine()))
             {
                 System.Console.WriteLine("");
@@ -319,6 +348,7 @@ namespace todo_list
                 }
             }
             System.Console.WriteLine("Would you like to change the Task Detail, \"Y\" or \"n\"?");
+            // if y is entered then the return is true and the following code is executed to update the task detail
             if (yesNoInput(Console.ReadLine()))
             {
                 System.Console.WriteLine("");
@@ -333,6 +363,8 @@ namespace todo_list
                     throw new Exception("The new name was longer than 255 characters and exceed the database column length.");
                 }
             }
+            
+            // functionality that needs to be added for due dates
             // System.Console.WriteLine("Would you like to change the Task Due Date \"Y\" or \"n\"?");
             // if (yesNoInput(Console.ReadLine()))
             // {
@@ -350,29 +382,37 @@ namespace todo_list
             // }
             return updateTask;
         }
+        // simple function that gets the task by its id
         ToDoItem getItemById(int taskId)
         {
             return toDoContext.to_do_item.Find(taskId);
         }
+        // Function to handle when the user would like to complete a task in the system.
         void completeTaskChange()
         {
             int task;
             System.Console.WriteLine("");
             System.Console.WriteLine("Please select the task you wish to complete or change back to incomplete.");
             string taskNum = Console.ReadLine();
+            // checks to see if the users input is an integer
             if (Int32.TryParse(taskNum, out task))
             {
+                // if it is an integer it confirms that there is a task at that id
                 if (getItemById(task) != null)
                 {
+                    // starts loging any potential changes
                     toDoContext.to_do_item.Update(getItemById(task));
+                    // if the task was already complete then the user is wanting to make the task active again
                     if (getItemById(task).taskComplete == true)
                     {
                         getItemById(task).taskComplete = false;
                     }
+                    // if the task is incomplete then the user would like to complete the task
                     else if (getItemById(task).taskComplete == false)
                     {
                         getItemById(task).taskComplete = true;
                     }
+                    // saves the changes to the task to the database
                     toDoContext.SaveChanges();
                 }
                 else
@@ -385,14 +425,15 @@ namespace todo_list
                 throw new Exception("The entry was not a integer");
             }
         }
+        // function to get the users input and test if they entered a valid command to execute the following code
         bool yesNoInput(string userInput)
         {
-            if (userInput.ToUpper() == "Y")
+            if (userInput.ToUpper() == "Y" || userInput.ToUpper() == "YES")
             {
                 System.Console.WriteLine("returned true");
                 return true;
             }
-            else if (userInput.ToUpper() == "N")
+            else if (userInput.ToUpper() == "N" || userInput.ToUpper() == "NO")
             {
                 System.Console.WriteLine("returned false");
                 return false;
