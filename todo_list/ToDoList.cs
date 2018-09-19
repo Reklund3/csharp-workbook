@@ -7,24 +7,27 @@ namespace todo_list
 {
     public class ToDoList
     {
-        List<ToDoItem> toDos;
+        // bool for the program loop, true until user indicates the which to close the program
         bool runProgram = true;
+        // entity framework declaration of the database context
         ToDoListContext toDoContext;
+        // program entry point and constructor for the To Do List
         public ToDoList()
         {
+            // defines the new context list for use within the program
             toDoContext = new ToDoListContext();
-            //toDoContext.Database.EnsureDeleted();
+            // ensures that hte database is created before entering the actual application functionality
             toDoContext.Database.EnsureCreated();
-            
-            toDos = new List<ToDoItem>();
+            // Start of the program loop
             do
             {
                 userOptionsMainMenu();
+                userOptionEntry();
             } while(runProgram);
         }
+        // Displays the primary options list for the user
         public void userOptionsMainMenu()
         {
-            //Console.Clear();
             System.Console.WriteLine("");
             System.Console.WriteLine("Welcome to your ToDo List");
             System.Console.WriteLine("-------- Options --------");
@@ -34,6 +37,11 @@ namespace todo_list
             System.Console.WriteLine("4) Delete Task");
             System.Console.WriteLine("5) Complete / Incomplete Task");
             System.Console.WriteLine("6) Exit To Do Application \n");
+            
+        }
+        // Method that tries to take the users input
+        public void userOptionEntry()
+        {
             try
             {
                 handleMainMenuOption(getUserOption(6));
@@ -43,19 +51,22 @@ namespace todo_list
                 System.Console.WriteLine("That was not a valid ToDo List Option");
             }
         }
-        int fieldLength(List<ToDoItem> list, bool x)
+        // Determines the largest value in the list and returns the length of that string
+        // it is passed a list of ToDoItem's and a bool value, the bool is used to determine which
+        // column it is looking at, Name or Detail.
+        int fieldLength(List<ToDoItem> list, bool nameOrDetail)
         {
             int len = 0;
             foreach (ToDoItem item in list)
             {
-                if (x)
+                if (nameOrDetail)
                 {
                     if (item.taskName.Length > len)
                     {
                         len = item.taskName.Length;
                     }
                 }
-                else if (!x)
+                else if (!nameOrDetail)
                 {
                     if (item.taskName.Length > len)
                     {
@@ -67,7 +78,7 @@ namespace todo_list
         }
         void displayList()
         {
-            var results = from item in toDoContext.to_do_item
+            var results = from item in toDoContext.to_do_item //where (item.taskComplete == true) this needs to be added and remove all the list code. Also have this be a method that returns a var.
             select item;
             List<ToDoItem> itemsList = new List<ToDoItem>();
             itemsList = results.ToList();
@@ -147,6 +158,7 @@ namespace todo_list
                 System.Console.WriteLine("|");
             }
         }
+        // displays a single list item.
         void displayList(ToDoItem singleItem)
         {
             Console.Clear();
@@ -154,16 +166,24 @@ namespace todo_list
             System.Console.WriteLine("|-------|-----------|-------------------------|-------------|");
             System.Console.WriteLine("|   {0}   |  {1}  |  {2}                 |    {3}     |", singleItem.Id, singleItem.taskName, singleItem.taskDetail, singleItem.taskComplete == true ? "Done" : "    " );
         }
+        // function takes in a user input and determines if that input is in the range of options
+        // the int numberOfPasses is used to be pass in the number of options of the calling menu.
+        // this was setup for later implementations using submenus
         int getUserOption(int numberOfPasses)
         {
+            // declares the users input integer
             int userNum;
+            // declare and define a list inputOptions
             List<int> inputOptions = new List<int>();
+            //lopps through the adding the options for the menu starting at 1.
             for (int i = 1; i <= numberOfPasses; i++)
             {
                 inputOptions.Add(i);
             }
+            // check to see if the user input is infact of type int32
             if(Int32.TryParse(Console.ReadLine(),out userNum))
             {
+                // checks to see if the user input was in the inputOptions list
                 if(inputOptions.Contains(userNum))
                 {
                     return userNum;
@@ -178,38 +198,37 @@ namespace todo_list
                 throw new Exception("The entry was not a valid number.");
             }
         }
+        // Once a user has selected an option the appropriate method is called
         void handleMainMenuOption(int option)
         {
-            if (option == 1)
+            switch (option)
             {
-                addTask();
-            }
-            else if (option == 2)
-            {
-                readTask();
-            }
-            else if (option == 3)
-            {
-                updateTask();
-            }
-            else if (option == 4)
-            {
-                deleteTask();
-            }
-            else if (option == 5)
-            {
-                completeTaskChange();
-            }
-            else if (option == 6)
-            {
-                System.Console.WriteLine(" Exiting program. ");
-                this.runProgram = false;
-            }
-            else
-            {
-                throw new Exception(" No Option was selected. ");
+                case 1:
+                    addTask();
+                    break;
+                case 2:
+                    readTask();
+                    break;
+                case 3:
+                    updateTask();
+                    break;
+                case 4:
+                    deleteTask();
+                    break;
+                case 5:
+                    completeTaskChange();
+                    break;
+                case 6:
+                    System.Console.WriteLine(" Exiting program. ");
+                    this.runProgram = false;
+                    break;
+                default:
+                    throw new Exception(" No Option was selected. ");
             }
         }
+        // method to handle user request to add a to do item
+        // trys to add a to do item to the database and save
+        // if it fails it will throw an exception without saving
         void addTask()
         {
             try
@@ -226,6 +245,7 @@ namespace todo_list
         {
             displayList();
         }
+        // Function to update a 
         void updateTask()
         {
             try
